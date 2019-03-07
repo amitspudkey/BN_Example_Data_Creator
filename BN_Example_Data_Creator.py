@@ -1,6 +1,8 @@
 import pandas as pd
 from tkinter import Tk
 from tkinter.filedialog import askopenfilename, asksaveasfilename
+import sqlite3
+import os
 
 def main():
     print()
@@ -29,15 +31,42 @@ def main():
     # Open input csv using the unknown encoder function
     data_product = open_unknown_csv(file_in_product, delimination)
 
+    # Define Database
+    database = 'database.db'
+
+    # Delete Old Database
+    delete_file(database)
+    delete_file(database + "-journal")
+
+    # Create Connenction to Database
+    print('Connecting to ' + database + '...')
+    conn = sqlite3.connect(database)
+    cur = conn.cursor()
+    print('Connected to ' + database + '!')
+
+    data_person.to_sql('person',conn)
+
+    cur.execute(
+        """
+            select 
+                *
+            from 
+                person;
+        """
+    )
 
 
 
-
-
-
-
-
-
+def delete_file(name):
+    # Deletes a given file. If the file cannot be deleted, displays message.
+    print('Deleting ' + name + '...')
+    try:
+        os.remove(name)
+        print(name + ' deleted!')
+    except OSError:
+        pass
+        print(name + " isn't present or cannot be deleted!")
+    print('')
 
 
 def open_unknown_csv(file_in, delimination):
