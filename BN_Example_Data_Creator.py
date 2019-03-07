@@ -8,16 +8,36 @@ def main():
     # Hide Tkinter GUI
     Tk().withdraw()
 
+    # Ask for delimination
+    delimination = input("Enter Deliminator: ")
+
     # Find input file
     file_in_person = select_file_in("Select Person Table")
+
+    # Open input csv using the unknown encoder function
+    data_person = open_unknown_csv(file_in_person, delimination)
 
     # Find input file
     file_in_personna = select_file_in("Select Personna Table")
 
+    # Open input csv using the unknown encoder function
+    data_personna = open_unknown_csv(file_in_personna, delimination)
+
     # Find input file
     file_in_product = select_file_in("Select Product Table")
 
-    #
+    # Open input csv using the unknown encoder function
+    data_product = open_unknown_csv(file_in_product, delimination)
+
+
+
+
+
+
+
+
+
+
 
 
 def open_unknown_csv(file_in, delimination):
