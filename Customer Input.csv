@@ -1,0 +1,25 @@
+Customer_ID,Gender,Age,Entity,Churn
+4211,M,21,Ice Cream Shop,1
+4212,M,42,Doctor,0
+4213,F,43,Coscto,1
+4214,M,54,Ford,1
+4215,F,65,Landscaper,0
+4216,F,54,Biologist,1
+4217,M,54,Athlete,1
+4218,F,54,Actress,0
+4219,F,33,Singer,0
+4220,F,23,Costco,0
+4221,F,26,Biologist,1
+4222,F,89,Singer,1
+4223,M,67,Ice Cream Shop,1
+4224,M,69,Ford,0
+4225,M,43,Landscaper,1
+4226,F,43,Biologist,0
+4227,M,23,Athete,1
+4228,M,34,Singer,1
+4229,F,45,Guitarist,1
+4230,F,33,Singer,0
+4231,F,22,Ice Cream Shop,1
+4232,F,23,Singer,1
+4233,M,45,Athlete,1
+4234,M,34,Coscto,1
