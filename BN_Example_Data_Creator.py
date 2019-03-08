@@ -3,6 +3,9 @@ from tkinter import Tk
 from tkinter.filedialog import askopenfilename, asksaveasfilename
 import sqlite3
 import os
+from datetime import datetime, timedelta
+import numpy as np
+
 
 def main():
     print()
@@ -38,13 +41,56 @@ def main():
     delete_file(database)
     delete_file(database + "-journal")
 
-    # Create Connenction to Database
+    # Create connection to Database
     print('Connecting to ' + database + '...')
     conn = sqlite3.connect(database)
     cur = conn.cursor()
     print('Connected to ' + database + '!')
 
-    data_person.to_sql('person',conn)
+    # Export Tables to SQL
+    data_person.to_sql('person', conn)
+    data_personna.to_sql('personna', conn)
+    data_product.to_sql('product', conn)
+
+    # Enter the desired number of transactions
+    # num_items = input_int("Please input number of desired items purchased: ", int(len(data_person)), 1000000000)
+
+    # Enter the desired data range
+    date_start = date_input("Input start date as YYYY/MM/DD: ")
+    while True:
+        date_end = date_input("Input end date as YYYY/MM/DD: ")
+        if date_end > date_start:
+            break
+        else:
+            print("End date must be greater input date!")
+
+    # Convert dates from str to Date
+    date_start = datetime.strptime(date_start, '%Y/%m/%d')
+    date_end = datetime.strptime(date_end, '%Y/%m/%d')
+
+    # Find number of unique customers
+    num_people = len(data_person)
+
+    # Find number of personnas
+    num_personna = len(data_personna)
+
+    # Calculate number of days between two dates
+    num_days = (date_end - date_start).days
+
+    # Start of Transactions
+    date_list = list()
+    person_list = list()
+    for person_index, person_row in data_person.iterrows():
+        for transaction_index in range(1, person_row["num_transactions"]):
+            # Get random date for transacation
+            num_days_add = random.randint(1, num_days)
+            print(num_days_add)
+            trans_date = date_start + timedelta(num_days_add)
+            for item_index in range(1, int(np.random.normal(person_row["num_items_per_trans_avg"], person_row["num_items_per_trans_stdev"]))):
+                # Write person_id to list
+                person_list.append(person_row["Customer_ID"])
+                # Write date of transactions to list
+                date_list.append(trans_date)
 
     cur.execute(
         """
@@ -55,6 +101,66 @@ def main():
         """
     )
 
+    # Commit SQL Changes
+    conn.commit()
+
+    # Close Database
+    conn.close()
+
+    # Delete Old Database
+    delete_file(database)
+    delete_file(database + "-journal")
+
+
+def date_input(note):
+    while True:
+        try:
+            date_in = input(note)
+            if len(date_in) == 10:
+                datetime.strptime(date_in, '%Y/%m/%d')
+                break
+            else:
+                print("Date is invalid!")
+
+        except ValueError:
+            print("Input not following YYYY/MM/DD format or is an invalid date!")
+
+    return date_in
+
+
+class Error(Exception):
+    # Base Error
+    pass
+
+
+class ValueTooSmallError(Error):
+    # Raise an error if value is too small
+    pass
+
+
+class ValueTooLargeError(Error):
+    # Raise an error if value is too large
+    pass
+
+
+def input_int(note, min_value, max_value):
+    # Ask for input of only integer
+    while True:
+        try:
+            int_out = int(input(note))
+            if int_out < min_value:
+                raise ValueTooSmallError
+            if int_out > max_value:
+                raise ValueTooLargeError
+            break
+        except ValueError:
+            print("Input must be an integer!")
+        except ValueTooSmallError:
+            print("Value must be greater than " + str(min_value))
+        except ValueTooLargeError:
+            print("Value must be smaller than " + str(max_value))
+
+    return int_out
 
 
 def delete_file(name):
@@ -102,6 +208,7 @@ def open_unknown_csv(file_in, delimination):
             exit()
 
     return data
+
 
 def open_file(file_in, encoder, delimination):
     try:

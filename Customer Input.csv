@@ -1,25 +1,25 @@
-Customer_ID,Gender,Age,Entity,Churn
-4211,M,21,Ice Cream Shop,1
-4212,M,42,Doctor,0
-4213,F,43,Coscto,1
-4214,M,54,Ford,1
-4215,F,65,Landscaper,0
-4216,F,54,Biologist,1
-4217,M,54,Athlete,1
-4218,F,54,Actress,0
-4219,F,33,Singer,0
-4220,F,23,Costco,0
-4221,F,26,Biologist,1
-4222,F,89,Singer,1
-4223,M,67,Ice Cream Shop,1
-4224,M,69,Ford,0
-4225,M,43,Landscaper,1
-4226,F,43,Biologist,0
-4227,M,23,Athete,1
-4228,M,34,Singer,1
-4229,F,45,Guitarist,1
-4230,F,33,Singer,0
-4231,F,22,Ice Cream Shop,1
-4232,F,23,Singer,1
-4233,M,45,Athlete,1
-4234,M,34,Coscto,1
+Customer_ID,Gender,Age,Entity,Churn,Average_Time,Stdev_Time,num_transactions,num_items_per_trans_avg,num_items_per_trans_stdev
+4211,M,21,Ice Cream Shop,1,0.38,0.044817167,47,3,2
+4212,M,42,Doctor,0,0.5,0.197782772,12,3,2
+4213,F,43,Coscto,1,0.63,0.041209268,29,8,5
+4214,M,54,Ford,1,0.75,0.028964094,28,8,1
+4215,F,65,Landscaper,0,0.88,0.077895632,11,7,3
+4216,F,54,Biologist,1,0.38,0.196488142,32,8,5
+4217,M,54,Athlete,1,0.5,0.002502127,54,9,5
+4218,F,54,Actress,0,0.63,0.127510039,11,3,1
+4219,F,33,Singer,0,0.75,0.033051681,10,6,5
+4220,F,23,Costco,0,0.5,0.189277452,11,10,4
+4221,F,26,Biologist,1,0.63,0.049752911,44,4,1
+4222,F,89,Singer,1,0.38,0.190699177,35,5,5
+4223,M,67,Ice Cream Shop,1,0.5,0.14906433,35,7,1
+4224,M,69,Ford,0,0.63,0.011063712,25,3,5
+4225,M,43,Landscaper,1,0.75,0.159207374,26,6,5
+4226,F,43,Biologist,0,0.25,0.167517764,16,10,5
+4227,M,23,Athete,1,0.38,0.06276383,38,10,1
+4228,M,34,Singer,1,0.5,0.075606142,24,8,3
+4229,F,45,Guitarist,1,0.63,0.224499752,46,3,5
+4230,F,33,Singer,0,0.75,0.141897535,1,9,1
+4231,F,22,Ice Cream Shop,1,0.38,0.177596949,9,10,4
+4232,F,23,Singer,1,0.5,0.077752256,18,5,1
+4233,M,45,Athlete,1,0.63,0.036965993,34,8,3
+4234,M,34,Coscto,1,0.75,0.076865365,46,4,4
