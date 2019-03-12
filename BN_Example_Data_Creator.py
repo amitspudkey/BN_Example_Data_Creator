@@ -96,7 +96,7 @@ def main():
                                 product_list.append(personna_headers[personna_index])
 
         # Print current position of transaction creation every 10 people
-        if person_index + 1 % 10 == 0:
+        if (person_index + 1) % 10 == 0:
             print("Created transaction for person " + str(person_index + 1) + " out of " + str(num_person_ids))
 
     # Loop through product table to randomly grab the UID for transaction table
@@ -118,7 +118,7 @@ def main():
         uid_list.append(item_df.iloc[item_index, :]["UID"])
 
         # Print current position of product creation every ten products
-        if index + 1 % 10 == 0:
+        if (index + 1 %) 10 == 0:
             print("Created product for person " + str(index + 1) + " out of " + str(num_person_ids))
 
     # Make each list into a Pandas series
