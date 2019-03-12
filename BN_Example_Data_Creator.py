@@ -1,10 +1,9 @@
 import pandas as pd
 from tkinter import Tk
 from tkinter.filedialog import askopenfilename, asksaveasfilename
-import sqlite3
-import os
 from datetime import datetime, timedelta
 import numpy as np
+import random
 
 
 def main():
@@ -31,29 +30,12 @@ def main():
     # Find input file
     file_in_product = select_file_in("Select Product Table")
 
+    # Set output file
+    file_out_trans = select_file_out(file_in_person, "Select File Out Transaction Table")
+    file_out_person = select_file_out(file_in_person, "Select File Out Person Table")
+
     # Open input csv using the unknown encoder function
     data_product = open_unknown_csv(file_in_product, delimination)
-
-    # Define Database
-    database = 'database.db'
-
-    # Delete Old Database
-    delete_file(database)
-    delete_file(database + "-journal")
-
-    # Create connection to Database
-    print('Connecting to ' + database + '...')
-    conn = sqlite3.connect(database)
-    cur = conn.cursor()
-    print('Connected to ' + database + '!')
-
-    # Export Tables to SQL
-    data_person.to_sql('person', conn)
-    data_personna.to_sql('personna', conn)
-    data_product.to_sql('product', conn)
-
-    # Enter the desired number of transactions
-    # num_items = input_int("Please input number of desired items purchased: ", int(len(data_person)), 1000000000)
 
     # Enter the desired data range
     date_start = date_input("Input start date as YYYY/MM/DD: ")
@@ -68,48 +50,98 @@ def main():
     date_start = datetime.strptime(date_start, '%Y/%m/%d')
     date_end = datetime.strptime(date_end, '%Y/%m/%d')
 
-    # Find number of unique customers
-    num_people = len(data_person)
-
-    # Find number of personnas
-    num_personna = len(data_personna)
-
     # Calculate number of days between two dates
     num_days = (date_end - date_start).days
+
+    # Get header from personna, used for determining product name
+    personna_headers = list(data_personna.columns.values)
+
+    print("Performing Transaction Calculation")
 
     # Start of Transactions
     date_list = list()
     person_list = list()
+    personna_list = list()
+    product_list = list()
+    num_person_ids = len(data_person.index)
     for person_index, person_row in data_person.iterrows():
+        # Get customer_personna
+        personna_list.append(person_row["Personna"])
         for transaction_index in range(1, person_row["num_transactions"]):
             # Get random date for transacation
             num_days_add = random.randint(1, num_days)
-            print(num_days_add)
             trans_date = date_start + timedelta(num_days_add)
             for item_index in range(1, int(np.random.normal(person_row["num_items_per_trans_avg"], person_row["num_items_per_trans_stdev"]))):
                 # Write person_id to list
                 person_list.append(person_row["Customer_ID"])
+
                 # Write date of transactions to list
                 date_list.append(trans_date)
 
-    cur.execute(
-        """
-            select 
-                *
-            from 
-                person;
-        """
-    )
+                # Set initial product found
+                initial_product_found = 0
 
-    # Commit SQL Changes
-    conn.commit()
+                # Get personna info for person
+                personna_hold = data_personna[data_personna["Personna"] == person_row["Personna"]]
 
-    # Close Database
-    conn.close()
+                # Get random number for product selection
+                product_rand = random.uniform(0, 1)
 
-    # Delete Old Database
-    delete_file(database)
-    delete_file(database + "-journal")
+                # Loop through all of the personna values to find product
+                for personna_index, personna_product in enumerate(personna_hold.iteritems()):
+                    if personna_index > 0:
+                        if initial_product_found == 0:
+                            if product_rand < float(personna_product[1]):
+                                initial_product_found = 1
+                                product_list.append(personna_headers[personna_index])
+
+        # Print current position of transaction creation every 10 people
+        if person_index + 1 % 10 == 0:
+            print("Created transaction for person " + str(person_index + 1) + " out of " + str(num_person_ids))
+
+    # Loop through product table to randomly grab the UID for transaction table
+    uid_list = list()
+    for index, i in enumerate(product_list):
+        # Filter items by product
+        item_df = data_product[data_product["Item"] == i]
+
+        # Reset index
+        item_df = item_df.reset_index()
+
+        # Get number of items
+        num_items = len(item_df.index) - 1
+
+        # Get random item index
+        item_index = random.randint(0, num_items)
+
+        # Get random item
+        uid_list.append(item_df.iloc[item_index, :]["UID"])
+
+        # Print current position of product creation every ten products
+        if index + 1 % 10 == 0:
+            print("Created product for person " + str(index + 1) + " out of " + str(num_person_ids))
+
+    # Make each list into a Pandas series
+    person_series = pd.Series(person_list, name="Customer_ID")
+    date_series = pd.Series(date_list, name="Date")
+    # product_series = pd.Series(product_list, name="Product")
+    uid_series = pd.Series(uid_list, name="UID")
+
+    # Concatenate data series into dataframe
+    transaction_df = pd.concat([person_series, date_series, uid_series], axis=1)
+
+    # Join all product Info
+    transaction_df = transaction_df.join(data_product.set_index('UID'), on='UID')
+
+    # Write Transaction Table
+    transaction_df.to_csv(file_out_trans, index=False)
+
+    # Drop data creation factors from person table
+    person_out = data_person.drop(["Average_Time", "Stdev_Time", "num_transactions", "num_items_per_trans_avg", "num_items_per_trans_stdev", "Personna"], 1)
+
+    # Write person table
+
+    person_out.to_csv(file_out_person, index=False)
 
 
 def date_input(note):
@@ -231,8 +263,8 @@ def select_file_in(note):
     return file_in
 
 
-def select_file_out(file_in):
-    file_out = asksaveasfilename(initialdir=file_in, title="Select file",
+def select_file_out(file_in, note):
+    file_out = asksaveasfilename(initialdir=file_in, title=note,
                                  filetypes=(("Comma Separated Values", "*.csv"), ("all files", "*.*")))
     if not file_out:
         input("Program Terminated. Press Enter to continue...")
