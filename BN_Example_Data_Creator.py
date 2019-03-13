@@ -63,6 +63,7 @@ def main():
     person_list = list()
     personna_list = list()
     product_list = list()
+    time_list = list()
     num_person_ids = len(data_person.index)
     for person_index, person_row in data_person.iterrows():
         # Get customer_personna
@@ -77,6 +78,9 @@ def main():
 
                 # Write date of transactions to list
                 date_list.append(trans_date)
+
+                # Get a transaction time
+                time_list.append(np.random.normal(person_row["Average_Time"],person_row["Stdev_Time"]))
 
                 # Set initial product found
                 initial_product_found = 0
@@ -118,17 +122,18 @@ def main():
         uid_list.append(item_df.iloc[item_index, :]["UID"])
 
         # Print current position of product creation every ten products
-        if (index + 1 %) 10 == 0:
-            print("Created product for person " + str(index + 1) + " out of " + str(num_person_ids))
+        if (index + 1) % 100 == 0:
+            print("Created product for transaction " + str(index + 1) + " out of " + str(num_person_ids))
 
     # Make each list into a Pandas series
     person_series = pd.Series(person_list, name="Customer_ID")
     date_series = pd.Series(date_list, name="Date")
+    time_list = pd.Series(time_list, name="Time")
     # product_series = pd.Series(product_list, name="Product")
     uid_series = pd.Series(uid_list, name="UID")
 
     # Concatenate data series into dataframe
-    transaction_df = pd.concat([person_series, date_series, uid_series], axis=1)
+    transaction_df = pd.concat([person_series, date_series, time_list, uid_series], axis=1)
 
     # Join all product Info
     transaction_df = transaction_df.join(data_product.set_index('UID'), on='UID')
