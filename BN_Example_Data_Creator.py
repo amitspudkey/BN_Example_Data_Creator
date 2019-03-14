@@ -123,7 +123,7 @@ def main():
 
         # Print current position of product creation every ten products
         if (index + 1) % 100 == 0:
-            print("Created product for transaction " + str(index + 1) + " out of " + str(num_person_ids))
+            print("Created product for transaction " + str(index + 1) + " out of " + str(len(product_list))
 
     # Make each list into a Pandas series
     person_series = pd.Series(person_list, name="Customer_ID")
