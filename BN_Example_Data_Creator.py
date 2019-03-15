@@ -68,11 +68,11 @@ def main():
     for person_index, person_row in data_person.iterrows():
         # Get customer_personna
         personna_list.append(person_row["Personna"])
-        for transaction_index in range(1, person_row["num_transactions"]):
+        for transaction_index in range(0, person_row["num_transactions"]):
             # Get random date for transacation
             num_days_add = random.randint(1, num_days)
             trans_date = date_start + timedelta(num_days_add)
-            for item_index in range(1, int(np.random.normal(person_row["num_items_per_trans_avg"], person_row["num_items_per_trans_stdev"]))):
+            for item_index in range(0, int(np.random.normal(person_row["num_items_per_trans_avg"], person_row["num_items_per_trans_stdev"]))):
                 # Write person_id to list
                 person_list.append(person_row["Customer_ID"])
 
@@ -123,7 +123,7 @@ def main():
 
         # Print current position of product creation every ten products
         if (index + 1) % 100 == 0:
-            print("Created product for transaction " + str(index + 1) + " out of " + str(len(product_list))
+            print("Created product for transaction " + str(index + 1) + " out of " + str(len(product_list)))
 
     # Make each list into a Pandas series
     person_series = pd.Series(person_list, name="Customer_ID")
