@@ -68,7 +68,7 @@ def main():
     for person_index, person_row in data_person.iterrows():
         # Get customer_personna
         personna_list.append(person_row["Personna"])
-        for transaction_index in range(0, person_row["num_transactions"]):
+        for transaction_index in range(0, int(round(person_row["num_transactions"], 0))):
             # Get random date for transacation
             num_days_add = random.randint(1, num_days)
             trans_date = date_start + timedelta(num_days_add)
